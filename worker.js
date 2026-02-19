@@ -17,6 +17,8 @@
     WP_CRON_URL      — Full base URL of your WordPress site, e.g. https://example.com
     WP_CRON_KEY      — Secret string sent in the X-Worker-Auth header so your
                        server can verify the request came from this Worker.
+
+	See https://github.com/Squarebow/Cloudflare-Worker-for-Wordpress-Cron for instructions
 */
 
 // How long (in milliseconds) to wait for WordPress before giving up.
