@@ -1,0 +1,128 @@
+.wp-cronflare-wrap {
+  --wf-bg: #f6f8fb;
+  --wf-card: #ffffff;
+  --wf-border: #d7dee8;
+  --wf-text: #1f2937;
+  --wf-muted: #6b7280;
+  --wf-green: #1f8f5f;
+  --wf-amber: #b86900;
+  --wf-blue: #1264a3;
+
+  color: var(--wf-text);
+}
+
+.wp-cronflare-lead {
+  color: var(--wf-muted);
+  max-width: 70ch;
+}
+
+.wp-cronflare-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin: 18px 0;
+}
+
+.wp-cronflare-card {
+  background: linear-gradient(180deg, #fff 0%, var(--wf-bg) 100%);
+  border: 1px solid var(--wf-border);
+  border-radius: 12px;
+  padding: 18px;
+  margin: 0 0 16px;
+}
+
+.wp-cronflare-card h2 {
+  margin-top: 0;
+}
+
+.wp-cronflare-checklist {
+  margin: 0;
+}
+
+.wp-cronflare-checklist li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px dashed var(--wf-border);
+  padding: 10px 0;
+}
+
+.wp-cronflare-checklist li:last-child {
+  border-bottom: 0;
+}
+
+.wp-cronflare-checklist .state {
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 99px;
+  padding: 5px 10px;
+  text-transform: uppercase;
+}
+
+.wp-cronflare-checklist .state.ok {
+  color: #fff;
+  background: var(--wf-green);
+}
+
+.wp-cronflare-checklist .state.warn {
+  color: #fff;
+  background: var(--wf-amber);
+}
+
+.wp-cronflare-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.wp-cronflare-secret-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.wp-cronflare-secret-row input[type="password"],
+.wp-cronflare-secret-row input[type="text"] {
+  width: min(100%, 420px);
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wp-cronflare-snippets h3 {
+  margin: 14px 0 8px;
+}
+
+.snippet-box {
+  border: 1px solid var(--wf-border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.snippet-box pre {
+  margin: 0;
+  background: #0f172a;
+  color: #e5edf9;
+  padding: 12px;
+  overflow-x: auto;
+}
+
+.snippet-box .button {
+  margin: 10px;
+}
+
+@media (max-width: 782px) {
+  .wp-cronflare-secret-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .wp-cronflare-secret-row .button {
+    width: fit-content;
+  }
+}

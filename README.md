@@ -17,6 +17,7 @@ Trigger `wp-cron.php` for one WordPress site reliably from Cloudflare's network,
 - [Why offload WordPress cron to a Worker?](#why-offload-wordpress-cron-to-a-worker)
 - [Performance and server load](#performance-and-server-load)
 - [How it works](#how-it-works)
+- [Optional WordPress plugin (better UI/UX)](#optional-wordpress-plugin-better-uiux)
 - [Setup](#setup)
 - [Securing wp-cron.php on your server](#securing-wp-cronphp-on-your-server)
 - [Testing](#testing)
@@ -108,6 +109,51 @@ Cloudflare Worker for WordPress works. Yay!
 ```
 
 Any other URL on your site (normal pages, images, etc.) passes straight through to your origin server — the Worker does not interfere.
+
+---
+
+## Optional WordPress plugin (better UI/UX)
+
+This repo now includes a WordPress admin plugin at:
+
+`wordpress-plugin/wp-cronflare/`
+
+It adds a cleaner setup experience inside WordPress:
+
+- Setup checklist (cron disabled, secret set, protection enabled)
+- Safer `wp-cron.php` endpoint protection via `X-Worker-Auth`
+- Copy-ready snippets for Worker variables and `wp-config.php`
+- Built-in diagnostics button to run an authenticated cron test
+- Cloudflare auto-setup (API token): verify token, detect zone, deploy Worker, set secrets, route, and cron schedule
+- Cloudflare OAuth connect flow (`Sign in with Cloudflare`) with callback handling and token refresh support
+- In-plugin OAuth app checklist with copy-ready redirect URI/auth URL/token URL/scope values
+- OAuth config tester button to validate field completeness and endpoint reachability before login
+
+Install it by copying the `wp-cronflare` folder into `wp-content/plugins/`, then activate **WP Cronflare** in the WordPress admin.
+
+### Cloudflare auto-setup permissions
+
+Create a Cloudflare API Token with at least:
+
+- `Zone:Read`
+- `Workers Scripts:Edit`
+- `Workers Routes:Edit`
+
+Then paste the token in **Settings → WP Cronflare**, save settings, and click **Run Cloudflare Auto Setup**.
+
+### Cloudflare OAuth setup (optional)
+
+If you prefer OAuth over manually creating API tokens:
+
+1. Create a Cloudflare OAuth application.
+2. Add this redirect URI in the OAuth app:
+   - `https://your-site.com/wp-admin/options-general.php?page=wp-cronflare&wp_cronflare_oauth=callback`
+3. In **Settings → WP Cronflare**, set:
+   - OAuth Client ID
+   - OAuth Client Secret
+   - OAuth Authorization URL (default: `https://dash.cloudflare.com/oauth2/auth`)
+   - OAuth Token URL (default: `https://dash.cloudflare.com/oauth2/token`)
+4. Save settings, then click **Sign in with Cloudflare**.
 
 ---
 
