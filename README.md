@@ -126,6 +126,7 @@ It adds a guided setup flow inside WordPress:
 - Built-in diagnostics button to run an authenticated cron test
 - Cloudflare auto-setup (API token): verify token, detect zone, deploy Worker, set secrets, route, and cron schedule
 - Cloudflare OAuth connect flow (`Sign in with Cloudflare`) with callback handling and token refresh support
+- Deploy-to-Cloudflare button flow (`deploy.workers.cloudflare.com/?url=...`) for quick no-OAuth Worker deployment
 - In-plugin OAuth app checklist with copy-ready redirect URI/auth URL/token URL/scope values
 - OAuth config tester button to validate field completeness and endpoint reachability before login
 
@@ -153,6 +154,14 @@ It adds a guided setup flow inside WordPress:
 8. Run **Run Cron Test** in the plugin.
 
 ### API token quick start (no OAuth app required)
+
+Option A (recommended no-OAuth path):
+
+1. In **WP Cronflare**, click **Deploy Worker (No OAuth App) → Deploy to Cloudflare**.
+2. Complete deployment in Cloudflare.
+3. Return to **WP Cronflare**, paste Cloudflare API token, and click **Run Cloudflare Auto Setup**.
+
+Option B:
 
 Create a Cloudflare API Token with at least:
 

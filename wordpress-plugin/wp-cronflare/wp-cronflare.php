@@ -108,6 +108,7 @@ final class WP_Cronflare_Plugin
         $output['cf_oauth_auth_url'] = isset($input['cf_oauth_auth_url']) ? esc_url_raw((string) $input['cf_oauth_auth_url']) : 'https://dash.cloudflare.com/oauth2/auth';
         $output['cf_oauth_token_url'] = isset($input['cf_oauth_token_url']) ? esc_url_raw((string) $input['cf_oauth_token_url']) : 'https://dash.cloudflare.com/oauth2/token';
         $output['cf_oauth_scope'] = isset($input['cf_oauth_scope']) ? sanitize_text_field((string) $input['cf_oauth_scope']) : '';
+        $output['deploy_repo_url'] = isset($input['deploy_repo_url']) ? esc_url_raw((string) $input['deploy_repo_url']) : 'https://github.com/bajpangosh/WP-Cronflare';
         $output['cf_oauth_connected_email'] = $defaults['cf_oauth_connected_email'];
         $output['cf_oauth_connected_at'] = $defaults['cf_oauth_connected_at'];
         $output['cf_oauth_refresh_token'] = $defaults['cf_oauth_refresh_token'];
@@ -833,6 +834,15 @@ final class WP_Cronflare_Plugin
                             class="regular-text"
                         />
 
+                        <label for="wp-cronflare-deploy-repo-url"><?php echo esc_html__('Deploy Button Repo URL', 'wp-cronflare'); ?></label>
+                        <input
+                            id="wp-cronflare-deploy-repo-url"
+                            type="url"
+                            name="<?php echo esc_attr(self::OPTION_KEY); ?>[deploy_repo_url]"
+                            value="<?php echo esc_attr((string) $settings['deploy_repo_url']); ?>"
+                            class="regular-text"
+                        />
+
                         <label for="wp-cronflare-worker-name"><?php echo esc_html__('Worker Name', 'wp-cronflare'); ?></label>
                         <input
                             id="wp-cronflare-worker-name"
@@ -908,6 +918,13 @@ final class WP_Cronflare_Plugin
                     <?php wp_nonce_field('wp_cronflare_oauth_test'); ?>
                     <?php submit_button(__('Run OAuth Config Test', 'wp-cronflare'), 'secondary', 'submit', false); ?>
                 </form>
+            </section>
+
+            <section class="wp-cronflare-card">
+                <h2><?php echo esc_html__('Deploy Worker (No OAuth App)', 'wp-cronflare'); ?></h2>
+                <p><?php echo esc_html__('Use Cloudflare one-click deploy to create the Worker first, then return here and run auto setup with API token mode.', 'wp-cronflare'); ?></p>
+                <p><a class="button button-primary" href="<?php echo esc_url($this->get_deploy_button_url($settings)); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html__('Deploy to Cloudflare', 'wp-cronflare'); ?></a></p>
+                <p class="description"><?php echo esc_html__('This avoids creating your own OAuth app when you just want a quick deploy path.', 'wp-cronflare'); ?></p>
             </section>
 
             <section class="wp-cronflare-card wp-cronflare-snippets">
@@ -1041,6 +1058,7 @@ final class WP_Cronflare_Plugin
             'cf_oauth_auth_url' => 'https://dash.cloudflare.com/oauth2/auth',
             'cf_oauth_token_url' => 'https://dash.cloudflare.com/oauth2/token',
             'cf_oauth_scope' => '',
+            'deploy_repo_url' => 'https://github.com/bajpangosh/WP-Cronflare',
             'cf_oauth_connected_email' => '',
             'cf_oauth_connected_at' => 0,
             'cf_oauth_refresh_token' => '',
@@ -1111,6 +1129,16 @@ final class WP_Cronflare_Plugin
             'page' => self::PAGE_SLUG,
             'wp_cronflare_oauth' => 'callback',
         ], admin_url('admin.php'));
+    }
+
+    private function get_deploy_button_url(array $settings): string
+    {
+        $repo_url = trim((string) ($settings['deploy_repo_url'] ?? ''));
+        if ($repo_url === '' || !filter_var($repo_url, FILTER_VALIDATE_URL)) {
+            $repo_url = 'https://github.com/bajpangosh/WP-Cronflare';
+        }
+
+        return 'https://deploy.workers.cloudflare.com/?url=' . rawurlencode($repo_url);
     }
 
     private function oauth_state_key(): string
