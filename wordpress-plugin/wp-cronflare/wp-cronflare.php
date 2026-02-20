@@ -55,8 +55,8 @@ final class WP_Cronflare_Plugin
     {
         $settings_link = sprintf(
             '<a href="%s">%s</a>',
-            esc_url(admin_url('options-general.php?page=' . self::PAGE_SLUG)),
-            esc_html__('Settings', 'wp-cronflare')
+            esc_url(admin_url('admin.php?page=' . self::PAGE_SLUG)),
+            esc_html__('Open', 'wp-cronflare')
         );
 
         array_unshift($links, $settings_link);
@@ -66,12 +66,14 @@ final class WP_Cronflare_Plugin
 
     public function register_admin_page(): void
     {
-        add_options_page(
+        add_menu_page(
             __('WP Cronflare', 'wp-cronflare'),
             __('WP Cronflare', 'wp-cronflare'),
             'manage_options',
             self::PAGE_SLUG,
-            [$this, 'render_admin_page']
+            [$this, 'render_admin_page'],
+            'dashicons-update',
+            58
         );
     }
 
@@ -130,7 +132,7 @@ final class WP_Cronflare_Plugin
 
     public function enqueue_admin_assets(string $hook): void
     {
-        if ($hook !== 'settings_page_' . self::PAGE_SLUG) {
+        if ($hook !== 'toplevel_page_' . self::PAGE_SLUG) {
             return;
         }
 
@@ -222,7 +224,7 @@ final class WP_Cronflare_Plugin
 
         set_transient(self::TEST_TRANSIENT_KEY, $result, 90);
 
-        wp_safe_redirect(admin_url('options-general.php?page=' . self::PAGE_SLUG));
+        wp_safe_redirect(admin_url('admin.php?page=' . self::PAGE_SLUG));
         exit;
     }
 
@@ -374,9 +376,20 @@ final class WP_Cronflare_Plugin
         $settings = $this->get_settings();
         $client_id = trim((string) ($settings['cf_oauth_client_id'] ?? ''));
         $auth_url = trim((string) ($settings['cf_oauth_auth_url'] ?? ''));
+        if ($auth_url === '') {
+            $auth_url = 'https://dash.cloudflare.com/oauth2/auth';
+        }
 
-        if ($client_id === '' || $auth_url === '') {
-            $this->set_setup_result(false, 'Cloudflare OAuth Client ID or Authorization URL is missing.');
+        $missing = [];
+        if ($client_id === '') {
+            $missing[] = 'OAuth Client ID';
+        }
+        if (!filter_var($auth_url, FILTER_VALIDATE_URL)) {
+            $missing[] = 'OAuth Authorization URL';
+        }
+
+        if (!empty($missing)) {
+            $this->set_setup_result(false, 'Missing or invalid: ' . implode(', ', $missing) . '. Save settings and try again.');
             $this->redirect_back();
         }
 
@@ -1082,7 +1095,7 @@ final class WP_Cronflare_Plugin
 
     private function redirect_back(): void
     {
-        wp_safe_redirect(admin_url('options-general.php?page=' . self::PAGE_SLUG));
+        wp_safe_redirect(admin_url('admin.php?page=' . self::PAGE_SLUG));
         exit;
     }
 
@@ -1097,7 +1110,7 @@ final class WP_Cronflare_Plugin
         return add_query_arg([
             'page' => self::PAGE_SLUG,
             'wp_cronflare_oauth' => 'callback',
-        ], admin_url('options-general.php'));
+        ], admin_url('admin.php'));
     }
 
     private function oauth_state_key(): string
